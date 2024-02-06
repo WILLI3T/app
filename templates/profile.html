@@ -1,0 +1,12 @@
+{% include 'layout.html' %}
+
+{% block content %}
+<h1>Profile</h1>
+
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Roles: {{ user.roles }}</p>
+<p>Status: {{ user.is_active }}</p>
+
+
+{% endblock %}
