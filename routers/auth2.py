@@ -13,6 +13,7 @@ from jose import JWTError, jwt
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+
 SECRET_KEY = "KlgH6AzYDeZeGwD288to79I3vTHT8wp7"
 ALGORITHM = "HS256"
 
@@ -181,3 +182,4 @@ async def register_user(request: Request, username: str = Form(...), role: str =
 
     msg= "User created successfully"
     return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+

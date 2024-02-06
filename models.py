@@ -5,12 +5,21 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
-class Box(Base):
+class Box_gps(Base):
     __tablename__ = "sku_current_gps_info"
 
     box = Column(Integer, primary_key=True, index=True)
     modem = Column(String, index=True)
     gps = Column(String, index=True)
+    uwagi = Column(String, index=True)
+    time_stamp = Column(String, index=True)
+
+class Box_bts(Base):
+    __tablename__ = "sku_current_bts_info"
+
+    box = Column(Integer, primary_key=True, index=True)
+    lac = Column(String, index=True)
+    cid = Column(String, index=True)
     uwagi = Column(String, index=True)
     time_stamp = Column(String, index=True)
 
