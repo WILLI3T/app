@@ -34,8 +34,7 @@ async def read_all_by_user(request: Request,db: Session = Depends(get_db)):
     user = await get_current_user(request)
     if user is None:
         return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND)
-    boxes = db.query(models.Box).all()
-    return templates.TemplateResponse("home.html", {"request": request, "boxes": boxes, "user": user})
+    return templates.TemplateResponse("home.html", {"request": request, "user": user})
 
 @router.get("/profile", response_class=HTMLResponse)
 async def get_profile(request: Request, db: Session = Depends(get_db)):
