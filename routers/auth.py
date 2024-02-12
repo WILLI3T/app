@@ -13,6 +13,7 @@ from jose import JWTError, jwt
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+
 SECRET_KEY = "KlgH6AzYDeZeGwD288to79I3vTHT8wp7"
 ALGORITHM = "HS256"
 
@@ -26,8 +27,8 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(
-    prefix="/auth",
-    tags=["auth"],
+    prefix="/auth2",
+    tags=["auth2"],
     responses={401: {"description": "Not authorized"}},
 )
 
@@ -48,7 +49,7 @@ def get_db():
     finally:
         db.close()
 
-#test
+
 def get_password_hash(password):
     return bcrypt_context.hash(password)
 
@@ -64,7 +65,7 @@ def authenticate_user(username: str, password: str, db):
 
     if not user:
         return False
-    if not verify_password(password, user.password_hash):
+    if not verify_password(password, user.hashed_password):
         return False
     return user
 
@@ -106,7 +107,7 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
         return False
     token_expires = timedelta(minutes=60)
     token = create_access_token(user.username,
-                                user.user_id,
+                                user.id,
                                 expires_delta=token_expires)
     response.set_cookie(key="access_token", value=token, httponly=True)
     return True
@@ -125,16 +126,16 @@ async def login(request: Request, db: Session = Depends(get_db)):
 
         if not validate_user_cookie:
             msg = "Invalid username or password"
-            return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+            return templates.TemplateResponse("login2.html", {"request": request, "msg": msg})
         return response
     except HTTPException:
         msg = "Unknow error"
-        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+        return templates.TemplateResponse("login2.html", {"request": request, "msg": msg})
 
 @router.get("/logout")
 async def logout(request: Request):
     msg = "Logout Successfull"
-    response = templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+    response = templates.TemplateResponse("login2.html", {"request": request, "msg": msg})
     response.delete_cookie(key="access_token")
     return response
 
@@ -142,29 +143,43 @@ async def logout(request: Request):
 
 @router.get("/register", response_class=HTMLResponse)
 async def register (request: Request):
-    return templates.TemplateResponse("register.html", {"request": request})
+    return templates.TemplateResponse("register2.html", {"request": request})
 
 @router.post("/register", response_class=HTMLResponse)
-async def register_user(request: Request, username: str = Form(...),
-                        firstname: str = Form(...), lastname: str = Form(...), password: str = Form(...),
+async def register_user(request: Request, username: str = Form(...), role: str = Form(...),
+                        email: str = Form(...), isactive: str = Form(...), password: str = Form(...),
                         password2: str = Form(...), db: Session = Depends(get_db)):
     validation1 = db.query(models.Users).filter(models.Users.username == username).first()
 
     if password != password2 or validation1 is not None:
         msg = "Invalid registration request"
-        return templates.TemplateResponse("register.html", {"request": request, "msg": msg})
+        return templates.TemplateResponse("register2.html", {"request": request, "msg": msg})
 
-    user_model = models.Users()
+    isactive = bool(isactive)
+
+    user_model = models.User()
     user_model.username = username
-    user_model.firstname = firstname
-    user_model.role = "user"
-    user_model.lastname = lastname
+    user_model.email = email
+    user_model.is_active = isactive
 
     hash_password = get_password_hash(password)
-    user_model.hashed_password = hash_password
+    user_model.password_hash = hash_password
 
     db.add(user_model)
     db.commit()
 
+    id_user = db.query(models.User).filter(models.User.username == username).first().user_id
+    user_role_model = models.UserRole()
+    
+    id_role = db.query(models.Role).filter(models.Role.role_name == role).first().role_id    
+    user_role_model.user_id = id_user
+    user_role_model.role_id = id_role
+
+    
+    db.add(user_role_model)
+    db.commit()
+    
+
     msg= "User created successfully"
     return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
+
