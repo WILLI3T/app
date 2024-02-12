@@ -1,13 +1,25 @@
 {% include 'layout.html' %}
 
 {% block content %}
+<div class="container centered-and-larger">
 <h1>Profile</h1>
 
 <p>Username: {{ user.username }}</p>
 <p>Email: {{ user.email }}</p>
 <p>Roles: {{ roles|join(", ") }}</p>
 <p>Status: {% if user.is_active %}activated{% else %}not activated{% endif %}</p>
-<form action="/auth2/set_new_password" method="post">
+{% if msg %}
+{% if msg == 'Password changed successfully' %}
+<div class="alert alert-success" role="alert">
+{{msg}}
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+{{msg}}
+</div>
+{% endif %}
+{% endif %}
+<form action="/boxes/set_new_password" method="post">
     <label for="current_password">Current Password:</label><br>
     <input type="password" id="current_password" name="current_password" required><br>
     <label for="new_password">New Password:</label><br>
@@ -16,5 +28,5 @@
     <input type="password" id="confirm_password" name="confirm_password" required><br>
     <input type="submit" value="Set New Password">
 </form>
-
+</div>
 {% endblock %}
