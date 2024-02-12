@@ -6,7 +6,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #323232;
+  color: #33333a;
 }
 
 .main-color {
@@ -16,6 +16,87 @@ h1, h2, h3, h4, h5, h6 {
 .strike-through-td {
     text-decoration: line-through;
 }
+
+
+@keyframes float {
+  0% {
+    transform: translatey(0px);
+  }
+  50% {
+    transform: translatey(-20px);
+  }
+  100% {
+    transform: translatey(0px);
+  }
+}
+
+.centered-and-smaller {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+  filter: brightness(90%);
+  animation: float 4s ease-in-out infinite; /* Dodaje "latający" efekt */
+}
+
+.centered-and-smaller:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+  filter: brightness(300%);
+  transform: scale(1.5);
+}
+
+
+@keyframes floatText {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes colorShift {
+  0% {
+    color: #ff69b4;
+  }
+  50% {
+    color: #00bfff;
+  }
+  100% {
+    color: #ff69b4;
+  }
+}
+
+.welcome-text {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: bold;
+  /* Usunięto właściwości powodujące przezroczystość tekstu */
+  color: #333; /* Stały kolor tekstu dla lepszej czytelności */
+  animation: floatText 5s ease-in-out infinite, colorShift 6s linear infinite; /* Animacja pływającego tekstu i zmiany koloru */
+}
+
+
+
+.centered-and-larger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em; /* Zwiększa rozmiar czcionki */
+}
+.centered-and-larger h1 {
+  font-size: 2em; /* Zwiększa rozmiar czcionki dla nagłówka */
+}
+.centered-and-larger input, .centered-and-larger label {
+  width: 100%; /* Zwiększa szerokość pól input i label */
+}
+
+
 
 
 

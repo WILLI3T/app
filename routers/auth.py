@@ -27,8 +27,8 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(
-    prefix="/auth2",
-    tags=["auth2"],
+    prefix="/auth",
+    tags=["auth"],
     responses={401: {"description": "Not authorized"}},
 )
 
@@ -65,7 +65,7 @@ def authenticate_user(username: str, password: str, db):
 
     if not user:
         return False
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user.password_hash):
         return False
     return user
 
@@ -107,7 +107,7 @@ async def login_for_access_token(response: Response, form_data: OAuth2PasswordRe
         return False
     token_expires = timedelta(minutes=60)
     token = create_access_token(user.username,
-                                user.id,
+                                user.user_id,
                                 expires_delta=token_expires)
     response.set_cookie(key="access_token", value=token, httponly=True)
     return True
@@ -135,7 +135,7 @@ async def login(request: Request, db: Session = Depends(get_db)):
 @router.get("/logout")
 async def logout(request: Request):
     msg = "Logout Successfull"
-    response = templates.TemplateResponse("login2.html", {"request": request, "msg": msg})
+    response = templates.TemplateResponse("login.html", {"request": request, "msg": msg})
     response.delete_cookie(key="access_token")
     return response
 
@@ -143,17 +143,17 @@ async def logout(request: Request):
 
 @router.get("/register", response_class=HTMLResponse)
 async def register (request: Request):
-    return templates.TemplateResponse("register2.html", {"request": request})
+    return templates.TemplateResponse("register.html", {"request": request})
 
 @router.post("/register", response_class=HTMLResponse)
 async def register_user(request: Request, username: str = Form(...), role: str = Form(...),
                         email: str = Form(...), isactive: str = Form(...), password: str = Form(...),
                         password2: str = Form(...), db: Session = Depends(get_db)):
-    validation1 = db.query(models.Users).filter(models.Users.username == username).first()
+    validation1 = db.query(models.User).filter(models.User.username == username).first()
 
     if password != password2 or validation1 is not None:
         msg = "Invalid registration request"
-        return templates.TemplateResponse("register2.html", {"request": request, "msg": msg})
+        return templates.TemplateResponse("register.html", {"request": request, "msg": msg})
 
     isactive = bool(isactive)
 
@@ -183,3 +183,5 @@ async def register_user(request: Request, username: str = Form(...), role: str =
     msg= "User created successfully"
     return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
 
+
+    

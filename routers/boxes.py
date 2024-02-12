@@ -11,6 +11,7 @@ from app import models
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from app.database import SessionLocal, engine
+from routers.auth import get_password_hash, verify_password, get_current_user
 
 router = APIRouter(
     prefix="/boxes",
@@ -34,8 +35,7 @@ async def read_all_by_user(request: Request,db: Session = Depends(get_db)):
     user = await get_current_user(request)
     if user is None:
         return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND)
-    boxes = db.query(models.Box).all()
-    return templates.TemplateResponse("home.html", {"request": request, "boxes": boxes, "user": user})
+    return templates.TemplateResponse("home.html", {"request": request, "user": user})
 
 @router.get("/profile", response_class=HTMLResponse)
 async def get_profile(request: Request, db: Session = Depends(get_db)):
@@ -55,3 +55,21 @@ async def get_profile(request: Request, db: Session = Depends(get_db)):
 
     # Return the user's data
     return templates.TemplateResponse("profile.html", {"request": request, "user": user_data, "roles": role_names})
+
+@router.post("/set_new_password")
+async def set_new_password(request: Request, current_password: str = Form(...), new_password: str = Form(...), confirm_password: str = Form(...), db: Session = Depends(get_db)):
+    user = await get_current_user(request)
+    authenticated_user = db.query(models.User).filter(models.User.user_id == user['id']).first()
+    role_data = db.query(models.Role).join(models.UserRole).filter(models.UserRole.user_id == user["id"]).all()
+    role_names = [role.role_name for role in role_data]
+    
+    if not verify_password(current_password, authenticated_user.password_hash):
+        return templates.TemplateResponse("profile.html", {"request": request, "user": authenticated_user, "msg": "Incorrect current password", "roles": role_names})
+
+    if new_password != confirm_password:
+        return templates.TemplateResponse("profile.html", {"request": request, "user": authenticated_user, "msg": "New password and confirmation do not match", "roles": role_names})
+
+    authenticated_user.password_hash = get_password_hash(new_password)
+    db.commit()
+
+    return templates.TemplateResponse("profile.html", {"request": request, "user": authenticated_user, "msg": "Password changed successfully", "roles": role_names})

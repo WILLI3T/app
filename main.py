@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 import paramiko
 from paramiko import RSAKey
 from app import models
-from app.routers import auth, auth2, boxes, box
+from app.routers import auth, boxes, box
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 from starlette import status
@@ -15,10 +15,9 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/")
 async def read_root():
-    return RedirectResponse(url="/auth2", status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(url="/auth", status_code=status.HTTP_302_FOUND)
 
 app.include_router(auth.router)
-app.include_router(auth2.router)
 app.include_router(boxes.router)
 app.include_router(box.router)
 
