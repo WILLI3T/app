@@ -1,0 +1,17 @@
+{% include 'layout.html' %}
+<form id="deviceForm">
+    <label for="deviceNumber">Numer urządzenia:</label>
+    <input type="text" id="deviceNumber" name="deviceNumber" required>
+    <button type="submit">Przejdź do pulpitu urządzenia</button>
+</form>
+
+<script>
+document.getElementById('deviceForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from being submitted normally
+
+    const deviceNumber = document.getElementById('deviceNumber').value;
+
+    // Redirect to the /serwis/{device_number} URL
+    window.location.href = '/serwis/' + deviceNumber;
+});
+</script>

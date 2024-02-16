@@ -1,0 +1,58 @@
+{% include 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uruchom Skrypt z Argumentem</title>
+    <style>
+        .script-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .spinner {
+            border: 8px solid #f3f3f3; /* Make the spinner smaller */
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 30px; /* Adjust the size of the spinner */
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin-left: 10px; /* Add some space between the button and the spinner */
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        </style>
+    <script>
+        async function runScript() {
+    const deviceNumber = document.getElementById("deviceNumber").value;
+    const loading = document.getElementById("loading");
+    const scriptResult = document.getElementById("scriptResult");
+
+    // Show the loading spinner
+    loading.style.display = "block";
+    scriptResult.innerText = "";
+
+    const response = await fetch(`/serwis/run-remote-script/${deviceNumber}`);
+    const data = await response.json();
+
+    // Hide the loading spinner
+    loading.style.display = "none";
+
+    scriptResult.innerText = data.result;
+}
+    </script>
+</head>
+<body>
+    <div class="script-controls">
+        <input type="text" id="deviceNumber" placeholder="Wpisz numer urządzenia">
+        <button onclick="runScript()">Uruchom Skrypt</button>
+        <div id="loading" style="display: none;">
+            <div class="spinner"></div>
+        </div>
+    </div>
+    <pre id="scriptResult">Wyniki pojawią się tutaj...</pre>
+</body>
+</html>

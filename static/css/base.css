@@ -79,7 +79,22 @@ h1, h2, h3, h4, h5, h6 {
   color: #333; /* Stały kolor tekstu dla lepszej czytelności */
   animation: floatText 5s ease-in-out infinite, colorShift 6s linear infinite; /* Animacja pływającego tekstu i zmiany koloru */
 }
+.navbar-nav.mx-auto {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
+.navbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
 
 
 .centered-and-larger {

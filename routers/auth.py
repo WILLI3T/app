@@ -126,11 +126,11 @@ async def login(request: Request, db: Session = Depends(get_db)):
 
         if not validate_user_cookie:
             msg = "Invalid username or password"
-            return templates.TemplateResponse("login2.html", {"request": request, "msg": msg})
+            return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
         return response
     except HTTPException:
         msg = "Unknow error"
-        return templates.TemplateResponse("login2.html", {"request": request, "msg": msg})
+        return templates.TemplateResponse("login.html", {"request": request, "msg": msg})
 
 @router.get("/logout")
 async def logout(request: Request):
