@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 import paramiko
 from paramiko import RSAKey
 from app import models
-from app.routers import auth, boxes, box
+from app.routers import auth, boxes, box, serwis
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 from starlette import status
@@ -20,6 +20,7 @@ async def read_root():
 app.include_router(auth.router)
 app.include_router(boxes.router)
 app.include_router(box.router)
+app.include_router(serwis.router)
 
 def ssh_execute_command(host, port, username, command):
     ssh_client = paramiko.SSHClient()

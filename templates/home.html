@@ -3,3 +3,38 @@
     <h1 class="welcome-text">Witaj w naszej magicznej aplikacji</h1>
     <img class="centered-and-smaller" src="/static/images/magia.jpg" alt="duże zdjęcie">
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        function createExplosion() {
+            // Generowanie wielu wybuchów
+            for (let i = 0; i < 100; i++) { // Zmienić '5' na więcej, aby generować więcej wybuchów
+                const explosion = document.createElement('div');
+                explosion.style.position = 'fixed';
+                explosion.style.left = `${Math.random() * window.innerWidth}px`;
+                explosion.style.top = `${Math.random() * window.innerHeight}px`;
+                explosion.style.width = '0';
+                explosion.style.height = '0';
+                explosion.style.borderRadius = '50%';
+                explosion.style.backgroundColor = 'orange';
+                explosion.style.zIndex = 10000;
+                explosion.style.opacity = 1;
+                explosion.style.transition = 'all 0.5s';
+                document.body.appendChild(explosion);
+    
+                setTimeout(() => {
+                    explosion.style.width = '1000px';
+                    explosion.style.height = '1000px';
+                    explosion.style.opacity = 0;
+                }, 50);
+    
+                setTimeout(() => {
+                    document.body.removeChild(explosion);
+                }, 550);
+            }
+        }
+    
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', createExplosion);
+        });
+    });
+    </script>
